@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxt.sys.mapper.SysMenusMapper">
+  <resultMap id="BaseResultMap" type="com.sxt.sys.vo.SysMenuVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="href" jdbcType="VARCHAR" property="href" />
+    <result column="lv" jdbcType="INTEGER" property="lv" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="flag" jdbcType="INTEGER" property="flag" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="target" jdbcType="VARCHAR" property="target" />
+    <result column="spread" jdbcType="BIT" property="spread" />
+  </resultMap>
+  
+ 
+  <sql id="Base_Column_List">
+    id, parent_id, title, href, lv, icon, flag, sort, target, spread
+  </sql>
+  
+  <select id="selectList"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menus
+    <where>
+    	<if test="title != null and title !=''">
+    		and title like concat('%',#{title},'%')
+    	</if>
+    	<if test="flag != null and flag !=''">
+    		and flag = #{flag}
+    	</if>
+    </where>
+    order by sort desc
+  </select>
+  
+  
+  <select id="selectOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_menus
+    where id = #{id}
+  </select>
+  
+  <delete id="delete" >
+   	update sys_menus set flag = 1 where id = #{id}
+  </delete>
+  
+  <insert id="insert" >
+    insert into sys_menus (parent_id, title, 
+      href, lv, icon, flag, 
+      sort, target, spread)
+    values (#{parentId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, 
+      #{href,jdbcType=VARCHAR}, #{lv,jdbcType=INTEGER}, #{icon,jdbcType=VARCHAR}, #{flag,jdbcType=INTEGER}, 
+      #{sort,jdbcType=INTEGER}, #{target,jdbcType=VARCHAR}, #{spread})
+  </insert>
+  
+  <update id="batchDelete" >
+  	update sys_menus set flag = 2 where
+  	<foreach collection="ids" item="id" open="  id in ("  close=")" separator=",">
+  		#{id}
+  	</foreach>
+  	
+  	<foreach collection="ids" item="id" open=" or  parent_id in ("  close=")" separator=",">
+  		#{id}
+  	</foreach>
+  </update>
+ 
+ 
+  <update id="update" >
+    update sys_menus
+    set parent_id = #{parentId,jdbcType=INTEGER},
+      title = #{title,jdbcType=VARCHAR},
+      href = #{href,jdbcType=VARCHAR},
+      lv = #{lv,jdbcType=INTEGER},
+      icon = #{icon,jdbcType=VARCHAR},
+      flag = #{flag,jdbcType=INTEGER},
+      sort = #{sort,jdbcType=INTEGER},
+      target = #{target,jdbcType=VARCHAR},
+      spread = #{spread,jdbcType=BIT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectMenuId" resultType="Integer">
+  	select menu_id  from sys_role_menu where role_id = #{roleId}
+  </select>
+  <!-- 根据角色ID 删除 菜单角色 -->
+  <delete id="deleteRoleMenu" >
+  	delete  from sys_role_menu where role_id = #{roleId}
+  </delete>
+  <!-- 批量添加角色菜单关系 -->
+  <insert id="batchMenuRole" >
+  	insert into sys_role_menu (role_id,menu_id) values
+  	<foreach collection="menuId" item="mId"  separator=",">
+  		(#{roleId},#{mId})
+  	</foreach> 
+  </insert>
+  
+  <!-- 根据用户ID 查询其菜单 -->
+  <select id="selectUserMenu" resultMap="BaseResultMap">
+  	select sm.* from sys_menus sm ,sys_role_menu srm ,sys_role_user sru WHERE 
+  		sru.user_id = #{userId} 
+		and sru.role_id = srm.role_id 
+		and sm.id = srm.menu_id;
+  </select>
+  
+  
+</mapper>

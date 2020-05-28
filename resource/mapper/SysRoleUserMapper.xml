@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sxt.sys.mapper.SysRoleUserMapper">
+  <resultMap id="BaseResultMap" type="com.sxt.sys.vo.SysRoleUserVO">
+    <id column="user_id" jdbcType="INTEGER" property="userId" />
+    <id column="role_id" jdbcType="INTEGER" property="roleId" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    user_id,role_id
+  </sql>
+  
+  <delete id="delete">
+    delete from sys_role_user
+    where user_id = #{id}
+  </delete>
+  
+  <insert id="insert" >
+    insert into sys_role_user (user_id, role_id) values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER})
+  </insert>
+</mapper>

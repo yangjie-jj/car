@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxt.sys.mapper.SysRolesMapper">
+  <resultMap id="BaseResultMap" type="com.sxt.sys.vo.SysRolesVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List">
+    id, name, description
+  </sql>
+  
+   <select id="selectList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_roles
+    <where>
+    	<if test="name != null and name !=''">
+    		and name like concat('%',#{name},'%')
+    	</if>
+    </where>
+  </select>
+  
+  
+  <select id="selectOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_roles
+    where id = #{id}
+  </select>
+  
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from sys_roles
+    where id = #{id}
+  </delete>
+  
+  <insert id="insert" >
+    insert into sys_roles (name, description)
+    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+  </insert>
+  
+
+  <update id="update" parameterType="com.sxt.sys.pojo.SysRoles">
+    update sys_roles
+    set name = #{name,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR}
+    where id = #{id}
+  </update>
+</mapper>

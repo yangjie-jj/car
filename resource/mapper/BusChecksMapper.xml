@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxt.bussi.mapper.BusChecksMapper">
+  <resultMap id="BaseResultMap" type="com.sxt.bussi.vo.BusChecksVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="check_no" jdbcType="VARCHAR" property="checkNo" />
+    <result column="check_time" jdbcType="VARCHAR" property="checkTime" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="problem" jdbcType="VARCHAR" property="problem" />
+    <result column="pay_money" jdbcType="INTEGER" property="payMoney" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="rent_no" jdbcType="VARCHAR" property="rentNo" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    id, check_no, check_time, `desc`, problem, pay_money, user_id, rent_no, create_time
+  </sql>
+ 
+ <select id="selectList"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bus_checks
+   	<where>
+   		<if test="checkNo != null and checkNo !=''">
+   			and check_no = #{checkNo}
+   		</if>
+   		<if test="rentNo != null and rentNo !=''">
+   			and rent_no = #{rentNo}
+   		</if>
+   		<if test="minCheckTime != null and minCheckTime !=''">
+   			and check_time >= #{minCheckTime}
+   		</if>
+   		<if test="maxCheckTime != null and maxCheckTime !=''">
+   			and #{maxCheckTime} >= check_time
+   		</if>
+   	</where>
+  </select>
+ 
+  <select id="selectOne"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bus_checks
+    where id = #{id}
+  </select>
+  
+  <delete id="delete">
+    delete from bus_checks
+    where id = #{id}
+  </delete>
+  
+  <insert id="insert" >
+    insert into bus_checks (check_no, check_time, 
+      `desc`, problem, pay_money, 
+      user_id, rent_no, create_time
+      )
+    values (#{checkNo,jdbcType=VARCHAR}, #{checkTime,jdbcType=VARCHAR}, 
+      #{desc,jdbcType=VARCHAR}, #{problem,jdbcType=VARCHAR}, #{payMoney,jdbcType=INTEGER}, 
+      #{userId,jdbcType=VARCHAR}, #{rentNo,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+ 
+  <update id="update" >
+    update bus_checks
+    set check_time = #{checkTime,jdbcType=VARCHAR},
+      `desc` = #{desc,jdbcType=VARCHAR},
+      problem = #{problem,jdbcType=VARCHAR},
+      pay_money = #{payMoney,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=VARCHAR},
+      rent_no = #{rentNo,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 统计每年月份的销售额度 -->
+  <select id="totalMonthMoney" resultType="int">
+  	select IFNULL(sum(pay_money),0) as money,'1' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-01') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'2' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-02') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'3' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-03') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'4' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-04') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'5' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-05') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'6' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-06') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'7' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-07') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'8' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-08') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'9' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-09') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'10' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-10') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'11' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-11') UNION 
+  	select IFNULL(sum(pay_money),0) as money,'12' as 'month' from bus_checks WHERE  DATE_FORMAT(check_time,'%Y-%m') =  concat(#{year},'-12')  
+  </select>
+  
+  <!-- 统计业务员年度销售额 -->
+  <select id="selectUserSaleMoney" resultType="map">
+  	SELECT su.id as id,sum(bc.pay_money) as money  from sys_users  su LEFT JOIN bus_checks bc on su.id = bc.user_id WHERE DATE_FORMAT(bc.check_time,'%Y')  = #{year} group BY su.id
+  </select>
+  
+</mapper>

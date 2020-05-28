@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxt.bussi.mapper.BussiCustomerMapper">
+  <resultMap id="BaseResultMap" type="com.sxt.bussi.vo.BussiCustomerVO">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="cust_name" jdbcType="VARCHAR" property="custName" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+ 
+  <sql id="Base_Column_List">
+    id, id_card, cust_name, sex, address, phone, position, create_time
+  </sql>
+  
+  <select id="selectList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bussi_customer
+  	<where>
+  		<if test="idCard != null and idCard !=''">
+  			and id_card = #{idCard}
+  		</if>
+  		<if test="custName != null and custName !=''">
+  			and cust_name like concat ('%',#{custName},'%')
+  		</if>
+  		<if test="address != null and address !=''">
+  			and address like concat ('%',#{address},'%')
+  		</if>
+  		<if test="phone != null and phone !=''">
+  			and phone = #{phone}
+  		</if>
+  	</where>
+  </select>
+  
+  <select id="selectOne" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from bussi_customer
+    where id = #{id}
+  </select>
+  
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from bussi_customer
+    where id = #{id}
+  </delete>
+  
+  <insert id="insert" >
+    insert into bussi_customer (id_card, cust_name, 
+      sex, address, phone, 
+      position, create_time)
+    values ( #{idCard}, #{custName}, 
+      #{sex}, #{address}, #{phone}, 
+      #{position}, #{createTime})
+  </insert>
+  
+  
+ 
+  <update id="update" >
+    update bussi_customer
+    <set>
+      <if test="idCard != null and idCard !=''">
+        id_card = #{idCard},
+      </if>
+      <if test="custName != null and custName !=''">
+        cust_name = #{custName},
+      </if>
+      <if test="sex != null and sex !=''">
+        sex = #{sex},
+      </if>
+      <if test="address != null and  address !=''">
+        address = #{address},
+      </if>
+      <if test="phone != null and phone !=''">
+        phone = #{phone},
+      </if>
+      <if test="position != null and position !=''">
+        position = #{position},
+      </if>
+      <if test="createTime != null and createTime !=''">
+        create_time = #{createTime},
+      </if>
+    </set>
+   	where id = #{id}
+  </update>
+ 
+ 
+ 	<select id="selectPie" resultType="map">
+ 		select  COUNT(address) as `value` ,address as `name`  from  bussi_customer GROUP BY address
+ 	</select>
+</mapper>

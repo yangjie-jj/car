@@ -1,0 +1,54 @@
+{
+	"contentManagement": [
+		{
+			"title": "菜单1",  
+			"icon": "icon-text",  
+			"href": "", 
+			"spread": true,
+			"children": [
+				{
+					"title": "菜单1-子页面1",
+					"icon": "&#xe656;",
+					"href": "page/404.html",
+					"spread": false
+				},
+				{
+					"title": "菜单1-子页面2",
+					"icon": "&#xe66c;",
+					"href": "http://www.baidu.com",
+					"spread": false,
+					"target": "_self"
+				}
+			]
+		},
+		{
+			"title": "图片管理",
+			"icon": "&#xe634;",
+			"href": "page/img/images.html",
+			"spread": false
+		},
+		{
+			"title": "其他页面",
+			"icon": "&#xe630;",
+			"href": "",
+			"spread": false,
+			"children": [
+				{
+					"title": "404页面",
+					"icon": "&#xe61c;",
+					"href": "page/404.html",
+					"spread": false
+				},
+				{
+					"title": "登录",
+					"icon": "&#xe609;",
+					"href": "page/login/login.html",
+					"spread": false,
+					"target": "_blank"
+				}
+			]
+		}
+	]
+}
+
+
